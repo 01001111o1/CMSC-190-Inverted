@@ -15,6 +15,7 @@ def main(path: str, iterations: int, ACMMatrix: np.ndarray, keep_all: bool = Fal
  
         _, size, n_channels = np.array(image).shape
         current_image : np.ndarray = np.array(image).copy()
+        print(np.amin(current_image), np.amax(current_image))
     
         x_image, y_image = np.meshgrid(np.arange(size), np.arange(size))
 
@@ -38,17 +39,14 @@ def main(path: str, iterations: int, ACMMatrix: np.ndarray, keep_all: bool = Fal
 
             if encrypt == True:
                 current_correlation = correlation_general(current_image)
-                print(counter, current_correlation)
                 if current_correlation < min_correlation:
                     min_correlation = current_correlation
                     min_iter = counter
-
+        print(np.amin(current_image), np.amax(current_image))
         image = fromarray(current_image)
 
     return (image, min_iter, min_correlation) if encrypt == True else image
 
 if __name__ == "__main__":
 
-    result, it, corr = main("Dataset/baboon.png", 192, [[1, 11], [101, 1112]], True, True)
-    #result.show()
-    print(it, corr)
+    result, it, corr = main("Dataset/317/airplane.png", 316, [[237, 255], [190, 64]], False, True)

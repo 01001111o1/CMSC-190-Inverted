@@ -4,29 +4,33 @@ import cv2
 from KTM_Encryption import KTM_Encrypt
 from ACM_Application_on_Images import ACM_Encrypt
 from Entropy_And_Differential_Attack_Analysis import compute_entropy, compute_NPCR, compute_UACI
-from Pixel_Correlation import correlation
+from Pixel_Correlation import correlation, correlation_breakup
 from PIL.Image import fromarray, open, Image
 import copy
 
-sizes = os.listdir("Dataset/")
+#sizes = os.listdir("Dataset/")
+sizes = ['500']
 
 ACM_Key = {'317' : (4187, [[8, 195], [215, 185]]),
-		   '350' : (1200, [[313, 36], [94, 95]]),
+           '350' : (1200, [[313, 36], [94, 95]]),
            '316' : (1040, [[233, 129], [262, 255]]),
            '318' : (936, [[205, 203], [52, 277]]),
-           '331' : (2490, [[7, 102], [232, 236]])}
+           '331' : (2490, [[7, 102], [232, 236]]),
+           '500' : (600, [[493, 118], [349, 83]])}
 
 ACM_Key_Modified = {'317' : (4187, [[9, 196], [215, 185]]),
-		   			'350' : (1200, [[314, 36], [94, 95]]),
+                    '350' : (1200, [[314, 36], [94, 95]]),
                     '316' : (1040, [[234, 129], [262, 255]]),
                     '318' : (936, [[206, 203], [52, 277]]),
-                    '331' : (2490, [[8, 102], [232, 236]])}
+                    '331' : (2490, [[8, 102], [232, 236]]),
+                    '500' : (600, [[494, 118], [349, 83]])}
 
 iters = {'317' : [1508, 2316, 2800, 1626, 3750, 843, 1025, 344, 2755, 86],
 		 '350' : [1003, 681, 204, 39, 917],
          '316' : [115, 718, 369, 720, 34], 
          '318' : [102, 109, 16, 76, 156],
-         '331' : [1736, 394, 966, 650, 44]} 
+         '331' : [1736, 394, 966, 650, 44],
+         '500' : [81, 88, 299, 148, 441]} 
 
 new_board = [[53,  48,  43,  12,  71,  66,  41,  14],
             [44,  11,  54,  47,  42, 13,  64, 67],
@@ -107,6 +111,18 @@ def Numerical_Results_All():
             UACI = compute_UACI(modified, original)
             print(f'Size: {size} Title: {title} NPCR: {NPCR} UACI: {UACI} Entropy:  {_entropy}, Correlation: {_correlation}')
 
+def asdadasd():
+    for size in sizes:
+        path = f'Results/{size}/Differential_Attack/'
+        titles = os.listdir(path)
+
+        for title in titles:
+            image_path = path + title + "/"
+            images = os.listdir(image_path)
+            original = image_path + images[1]
+            original = np.array(open(original))
+            h, v, d = correlation_breakup(original) 
+            print(f'Size: {size} Title: {title} Horizontal: {h} Vertical: {v} Diagonal: {d}')
 ###################################################### NEED TO DETERMINE IF IT CAN BE CHANGED ###########################
 
 def decrypt(iters: int, size,  path):
@@ -169,5 +185,6 @@ if __name__ == "__main__":
     #decrypt_all_modifiedkey()
     
     #DAA_All()	
-    Numerical_Results_All()
+    #Numerical_Results_All()
+    #asdadasd() #Hiwalay na correlation
 	

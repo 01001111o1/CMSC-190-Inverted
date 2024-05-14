@@ -16,6 +16,9 @@ def calculate_correlation(A : np.ndarray, idx : list[slice]) -> float:
 def correlation_general(image : np.ndarray) -> float:
     return np.mean([calculate_correlation(image, indices[i]) for i in range(3)])
 
+def correlation_breakup(image : np.ndarray) -> list[float]:
+    return [calculate_correlation(image, indices[i]) for i in range(3)]
+
 def correlation(path: str) -> float:
     with open(path) as image:
         image = np.array(image)

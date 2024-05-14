@@ -67,4 +67,4 @@ def rand_acm_matrix(N : int) -> tuple[np.ndarray, float, int]:
 
     return M, det, period
 
-print(rand_acm_matrix(331))
+print(rand_acm_matrix(500))

@@ -16,3 +16,4 @@ def minimalPeriod(A: list[list[int]], N : int, dims : int = 2) -> int:
 def _2DGDCM(p : int = 1, q : int = 1) -> list[list[int]]:
     return np.array([[1, p], [q, p * q + 1]])
 
+print(minimalPeriod(_2DGDCM(2, 3), 10))
