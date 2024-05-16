@@ -1,3 +1,4 @@
+import csv
 import os 
 import numpy as np
 import cv2
@@ -5,11 +6,10 @@ from KTM_Encryption import KTM_Encrypt
 from ACM_Application_on_Images import ACM_Encrypt
 from Entropy_And_Differential_Attack_Analysis import compute_entropy, compute_NPCR, compute_UACI
 from Pixel_Correlation import correlation, correlation_breakup
-from PIL.Image import fromarray, open, Image
+from PIL.Image import fromarray, open as pil_open, Image
 import copy
 
-#sizes = os.listdir("Dataset/")
-sizes = ['500']
+sizes = os.listdir("Dataset/")
 
 ACM_Key = {'317' : (4187, [[8, 195], [215, 185]]),
            '350' : (1200, [[313, 36], [94, 95]]),
@@ -58,7 +58,7 @@ def save_encrypted(size: str, path: str):
 
     title: str = os.path.splitext(os.path.split(path)[1])[0]
     name: str = "{name}-encrypted.png"
-    image = open(path)
+    image = pil_open(path)
     encrypted, iters = encrypt(size, image)
     path: str = name.format(name = title)
     cv2.imwrite(f"Results/{size}/" + path, cv2.cvtColor(encrypted, cv2.COLOR_RGB2BGR))
@@ -71,7 +71,7 @@ def create_DAA(size, path: str):
     cd(res_path)
     name: str = "{name}-{type}.png"
 
-    original = np.array(open(path))
+    original = np.array(pil_open(path))
     modified = copy.deepcopy(original)
     modified[4, 6] = 255 - modified[4, 6]
     _original_encrypted, it1 = encrypt(size, original)
@@ -96,6 +96,7 @@ def DAA_All():
             create_DAA(size, image_path)		
 
 def Numerical_Results_All():
+    results = []
     for size in sizes:
         path = f'Results/{size}/Differential_Attack/'
         titles = os.listdir(path)
@@ -110,8 +111,16 @@ def Numerical_Results_All():
             NPCR = compute_NPCR(modified, original)
             UACI = compute_UACI(modified, original)
             print(f'Size: {size} Title: {title} NPCR: {NPCR} UACI: {UACI} Entropy:  {_entropy}, Correlation: {_correlation}')
-
+        
+            results.append([size, title, NPCR, UACI, _entropy, _correlation])
+    
+    with open('inverted_numerical_results.csv', mode='w', newline='') as file:
+        writer = csv.writer(file)
+        writer.writerow(['Size', 'Title', 'NPCR', 'UACI', 'Entropy', 'Correlation'])
+        writer.writerows(results)
+    
 def asdadasd():
+    results = []
     for size in sizes:
         path = f'Results/{size}/Differential_Attack/'
         titles = os.listdir(path)
@@ -120,9 +129,17 @@ def asdadasd():
             image_path = path + title + "/"
             images = os.listdir(image_path)
             original = image_path + images[1]
-            original = np.array(open(original))
+            original = np.array(pil_open(original))
             h, v, d = correlation_breakup(original) 
+            results.append([size, title, h, v, d])
             print(f'Size: {size} Title: {title} Horizontal: {h} Vertical: {v} Diagonal: {d}')
+    
+    with open('inverted_correlation_results.csv', mode='w', newline='') as file:
+        writer = csv.writer(file)
+        writer.writerow(['Size', 'Title', 'Horizontal', 'Vertical', 'Diagonal'])
+        writer.writerows(results)
+
+
 ###################################################### NEED TO DETERMINE IF IT CAN BE CHANGED ###########################
 
 def decrypt(iters: int, size,  path):
@@ -184,13 +201,6 @@ if __name__ == "__main__":
     #decrypt_all()
     #decrypt_all_modifiedkey()
     #DAA_All()
-
-
-
-
-
-
-    	
-    #Numerical_Results_All()
-    #asdadasd() #Hiwalay na correlation
+    Numerical_Results_All()
+    asdadasd() #Hiwalay na correlation
 	
